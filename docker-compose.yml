@@ -1,0 +1,26 @@
+services:
+  service1:
+    build: ./service_1
+    ports:
+      - "8001:8001"
+
+  service2:
+    build: ./service_2
+    ports:
+      - "8002:8002"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - service1
+      - service2
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
